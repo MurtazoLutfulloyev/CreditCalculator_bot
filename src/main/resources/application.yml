@@ -1,0 +1,25 @@
+server:
+  port: 9080
+
+spring:
+  banner:
+    location: classpath:static/banner.txt
+  datasource:
+    url: jdbc:postgresql://localhost:5432/credits_info
+    username: postgres
+    password: root
+  jpa:
+#    hibernate:
+#      ddl-auto: update
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+
+telegram:
+  bot:
+    username: '@CreditCalculatorRobotBot'
+    token: '5693093264:AAHNlFI6JzzItTCJF8LTn9y-ymRLqq4_1Gs'
+    groupId: '-1001870994751'
+
+file:
+  path:
