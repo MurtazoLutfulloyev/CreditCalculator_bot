@@ -99,7 +99,7 @@ public class MainBotService extends TelegramLongPollingBot {
                         if (userService.isNumeric(message.getText())) {
                             map.put("totalAmount", message.getText());
                             globalMap.put(chatId, map);
-                            executeButtons(buttonService.back(lang.get(chatId)), null, lang.get(chatId));
+                            executeButtons(null, null, lang.get(chatId));
                             round.put(chatId, "4");
                             back.put(chatId, 1);
                         } else {
@@ -115,7 +115,7 @@ public class MainBotService extends TelegramLongPollingBot {
                         if (userService.isNumeric(message.getText())) {
                             map.put("percentage", message.getText());
                             globalMap.put(chatId, map);
-                            executeButtons(buttonService.back(lang.get(chatId)), null, lang.get(chatId));
+                            executeButtons(null, null, lang.get(chatId));
                             round.put(chatId, "5");
                             back.put(chatId, 1);
                         } else {
@@ -137,20 +137,38 @@ public class MainBotService extends TelegramLongPollingBot {
                             back.put(chatId, 1);
                         } else {
                             round.put(chatId, "4.1");
-                            executeButtons(buttonService.back(lang.get(chatId)), null, lang.get(chatId));
+                            executeButtons(null, null, lang.get(chatId));
                             update.getMessage().setText(null);
                             round.put(chatId, "5");
                             onUpdateReceived(update);
                         }
                         break;
                     case "6":
+                        break;
 
+                    case "12":
+                        executeGroup(update);
+                        message.setText("/start");
+                        execute();
+                        executeButtons(buttonService.back(lang.get(user.getChatId())), null, lang.get(user.getChatId()));
+                        round.remove(chatId);
+                        onUpdateReceived(update);
+                        break;
+                    case "13":
+                        shareContact(lang.get(chatId));
                         break;
 
                     default:
                         return;
                 }
 
+                if (update.getMessage().hasContact()) {
+                    message.setText("/start");
+                    round.put(chatId, "14");
+                    executeGroupContact(update);
+                    round.remove(chatId);
+                    onUpdateReceived(update);
+                }
             }
 
 
@@ -181,26 +199,77 @@ public class MainBotService extends TelegramLongPollingBot {
 
                 }
 
-            } else if (round.get(user.getChatId()).equals("2") || round.get(user.getChatId()).equals("2.1")) {
+            }
+            if (round.get(user.getChatId()).equals("2") || round.get(user.getChatId()).equals("2.1")) {
                 switch (callbackQuery.getData()) {
                     case "Kalkulyator":
                         lang.put(user.getChatId(), "uz");
-                        executeButtons(buttonService.back(lang.get(user.getChatId())), null, lang.get(user.getChatId()));
+                        executeButtons(null, null, lang.get(user.getChatId()));
                         round.put(user.getChatId(), "3");
                         globalMap.put(user.getChatId(), map);
                         break;
                     case "Калкулятор":
                         lang.put(user.getChatId(), "ru");
-                        executeButtons(buttonService.back(lang.get(user.getChatId())), null, lang.get(user.getChatId()));
+                        executeButtons(null, null, lang.get(user.getChatId()));
                         round.put(user.getChatId(), "3");
                         globalMap.put(user.getChatId(), map);
                         break;
-
+                    case "Ortga":
+                        round.put(user.getChatId(), "0");
+                        executeButtons(null, buttonService.chooseLanguage(), "uz");
+                        round.put(user.getChatId(), "1");
+                        break;
+                    case "Назад":
+                        round.put(user.getChatId(), "0");
+                        executeButtons(null, buttonService.chooseLanguage(), "ru");
+                        round.put(user.getChatId(), "1");
+                        break;
                 }
             }
+
+            if (round.get(user.getChatId()).equals("2")) {
+                switch (callbackQuery.getData()) {
+                    case "Aloqa":
+                        executeButtons(null, buttonService.chooseConnect(lang.get(user.getChatId())), lang.get(user.getChatId()));
+                        round.put(user.getChatId(), "11");
+                        break;
+                    case "Связь":
+                        executeButtons(null, buttonService.chooseConnect(lang.get(user.getChatId())), lang.get(user.getChatId()));
+                        round.put(user.getChatId(), "11");
+                        break;
+                }
+            }
+            if (round.get(user.getChatId()).equals("11")) {
+                switch (callbackQuery.getData()) {
+                    case "Operatorga yozish":
+                        executeButtons(buttonService.back(lang.get(user.getChatId())), null, lang.get(user.getChatId()));
+                        round.put(user.getChatId(), "12");
+                        break;
+                    case "Menga qo'ng'iroq qiling":
+                        round.put(user.getChatId(), "13");
+                        shareContact(lang.get(user.getChatId()));
+                        break;
+                    case "Ortga":
+                        executeButtons(null, buttonService.chooseConnect(lang.get(user.getChatId())), lang.get(user.getChatId()));
+                        round.put(user.getChatId(), "11");
+                        break;
+
+                    case "Напишите оператору":
+                        executeButtons(buttonService.back(lang.get(user.getChatId())), null, lang.get(user.getChatId()));
+                        round.put(user.getChatId(), "12");
+                        break;
+                    case "Позвони мне":
+                        executeButtons(buttonService.back(lang.get(user.getChatId())), null, lang.get(user.getChatId()));
+                        round.put(user.getChatId(), "13");
+                        break;
+                    case "Назад":
+                        executeButtons(null, buttonService.chooseConnect(lang.get(user.getChatId())), lang.get(user.getChatId()));
+                        round.put(user.getChatId(), "11");
+                        break;
+                }
+
+            }
         }
-
-
     }
 
     private void executeDeleteMessage(Update update) {
@@ -209,6 +278,45 @@ public class MainBotService extends TelegramLongPollingBot {
         deleteMessage.setChatId(String.valueOf(user.getChatId()));
         try {
             execute(deleteMessage);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private void execute() {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(String.valueOf(user.getChatId()));
+        sendMessage.setText(userMessages.response(round.get(user.getChatId()).toString(), lang.get(user.getChatId())));
+        sendMessage.enableHtml(true);
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        sendMessage.setReplyMarkup(replyKeyboardMarkup);
+        try {
+            execute(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void executeGroup(Update update) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(groupId);
+        sendMessage.setText(
+                "First name: " + update.getMessage().getFrom().getFirstName() +
+                        "\nLast name: " + update.getMessage().getFrom().getLastName() +
+                        "\nUsername: " + update.getMessage().getFrom().getUserName() +
+                        "\nDescription: " + update.getMessage().getText());
+        try {
+            execute(sendMessage);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void executeGroupContact(Update update) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(groupId);
+        sendMessage.setText("Contact: " + update.getMessage().getContact().getPhoneNumber());
+        try {
+            execute(sendMessage);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }

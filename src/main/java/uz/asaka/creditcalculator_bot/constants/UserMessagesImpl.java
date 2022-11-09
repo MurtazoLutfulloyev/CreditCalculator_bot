@@ -33,9 +33,22 @@ public class UserMessagesImpl implements UserMessages {
                     return "Kredit muddati xato kiritildi, Qaytadan kiriting:";
                 case "5":
                     return "Fileda ko`rinishidagi jadval sizga taqdim etildi.";
+                case "10":
+                    return "Kerakli bo'limni tanlang:";
+                case "11":
+                    return "Savollaringizni yozing:";
+                case "12":
+                    return "Xabaringiz operatorlaga yetkazildi, sizga xizmat ko'rsatganimizdan mamnunmiz";
+                case "13":
+                    return "Iltimos kontaktingizni yuboring";
+                case "14":
+                    return "Abonent qo'ng'iroq qilishingizni so'ragan: ";
             }
         } else {
             switch (round) {
+                case "0":
+                    return "Muloqot tilini tanlang\n" +
+                            "Выберите язык";
                 case "1":
                     return "Выберите тип услуги:";
 
@@ -53,7 +66,16 @@ public class UserMessagesImpl implements UserMessages {
                     return "Срок кредита был введен неправильно, пожалуйста, введите еще раз:";
                 case "5":
                     return "Вашему вниманию представлена таблица в формате файла.";
-
+                case "10":
+                    return "Выберите нужный раздел:";
+                case "11":
+                    return "Пишите свои вопросы:";
+                case "12":
+                    return "Ваше сообщение передано оператору, будем рады Вам помочь";
+                case "13":
+                    return "Пожалуйста, отправьте ваш контакт";
+                case "14":
+                    return "Абонент попросил позвонить:";
             }
         }
 

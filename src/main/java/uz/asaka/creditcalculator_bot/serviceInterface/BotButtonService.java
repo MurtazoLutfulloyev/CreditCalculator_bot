@@ -21,6 +21,8 @@ public interface BotButtonService {
 
     ReplyKeyboardMarkup back(String lang);
 
+    InlineKeyboardMarkup chooseConnect(String lang);
+
 
     /************************************************InlineKeyboards***************************************************/
 

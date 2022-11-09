@@ -99,5 +99,11 @@ public class BotButtonServiceImpl implements BotButtonService {
                 createMarkupButtons(List.of( "Назад"));
     }
 
+    @Override
+    public InlineKeyboardMarkup chooseConnect(String lang) {
+        return  (lang.equals("uz"))? createInlineKeyboardButton(List.of("Operatorga yozish", "Menga qo'ng'iroq qiling","Ortga"), 3) :
+                createInlineKeyboardButton(List.of("Напишите оператору", "Позвони мне", "Назад"), 2);
+    }
+
 }
 
